@@ -1,3 +1,8 @@
+#----------------------------------------------#
+# bucket-base: main                            #
+# ./modules/aws/bucket-base/main.tf            #
+#----------------------------------------------#
+
 
 resource "aws_s3_bucket" "s3_web_bucket" {
   bucket = var.s3w_bucket_name
@@ -12,27 +17,66 @@ resource "aws_s3_bucket" "s3_web_bucket" {
   }
 }
 
-# resource "aws_s3_bucket_acl" "s3_bucket_acl" {
-#   # depends_on = [
-#   #   aws_s3_bucket_ownership_controls.s3_bucket_control,
-#   #   # aws_s3_bucket_public_access_block.s3_bucket_public_access,
-#   # ]
+resource "aws_s3_bucket_website_configuration" "s3_web_config" {
+  bucket = aws_s3_bucket.s3_web_bucket.id
 
-#   bucket = aws_s3_bucket.s3_web_bucket.id
-#   acl    = "public-read"
-# }
+  index_document {
+    suffix = "index.html"
+  }
 
-# resource "aws_s3_bucket_website_configuration" "static_web_config" {
-#   bucket = aws_s3_bucket.s3_web_bucket.id
+  error_document {
+    key = "error.html"
+  }
+  
+}
 
-#   index_document {
-#     suffix = "index.html"
-#   }
+resource "aws_s3_bucket_policy" "s3_bucket_acl" { # -> s3_bucket_policy -- personal name
+  bucket = aws_s3_bucket.s3_web_bucket.id
 
-#   error_document {
-#     key = "error.html"
-#   }
-# }
+policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "PublicReadGetObject",
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "s3:GetObject",
+      "Resource": "${aws_s3_bucket.s3_web_bucket.arn}/*"
+    }
+  ]
+}
+EOF
+
+
+  # policy = jsonencode({
+  #   Version = "2012-10-17"
+  #   Statement = [
+  #     {
+  #       Sid       = "PublicReadGetObject"
+  #       Effect    = "Allow"
+  #       Principal = "*"
+  #       Action    = "s3:GetObject"
+  #       Resource = [
+  #         aws_s3_bucket.s3_web_bucket.arn,
+  #         "${aws_s3_bucket.s3_web_bucket.arn}/*",
+  #       ]
+  #     },
+  #   ]
+  # })
+}
+
+resource "aws_s3_bucket_website_configuration" "static_web_config" {
+  bucket = aws_s3_bucket.s3_web_bucket.id
+
+  index_document {
+    suffix = "index.html"
+  }
+
+  error_document {
+    key = "error.html"
+  }
+}
 
 # resource "aws_s3_object" "object_index" {
 #   bucket = aws_s3_bucket.s3_web_bucket.id

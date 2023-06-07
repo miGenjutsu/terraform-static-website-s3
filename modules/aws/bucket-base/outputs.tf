@@ -1,3 +1,8 @@
+#----------------------------------------------#
+# bucket-base: outputs.tf                      #
+# ./modules/aws/bucket-base/outputs.tf         #
+#----------------------------------------------#
+
 # output "s3_bucket_arn" {
 #   description = "arn for created s3 bucket"
 #   value       = aws_s3_bucket.s3_web_bucket.arn
