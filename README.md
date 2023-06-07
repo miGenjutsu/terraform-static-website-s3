@@ -26,3 +26,10 @@
 ├── terraform.tfstate.backup
 └── variables.tf
 ```
+
+## tfvars files
+
+```sh
+s3w_bucket_name = "website-host-acg-clx-0601231559"
+s3w_bucket_tag  = "website_host"
+```
